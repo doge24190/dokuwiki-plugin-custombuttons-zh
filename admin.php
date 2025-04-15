@@ -88,6 +88,30 @@ class admin_plugin_custombuttons extends DokuWiki_Admin_Plugin {
             $this->saveCBData($conf);
             $this->reloadBar();
         }
+        } elseif ($INPUT->has('edit')) {
+            if (!checkSecurityToken()) return;
+
+            $conf = $this->loadCBData();
+            $index = $INPUT->int('edit');
+
+            if (isset($conf[$index])) {
+                $type = 0;
+                if ($INPUT->str('pretag') != '' && $INPUT->str('posttag') != '') {
+                    $type = 1;
+                }
+
+                $conf[$index] = array(
+                    'label' => $INPUT->str('label'),
+                    'code'  => $INPUT->str('code'),
+                    'type'  => $type,
+                    'pretag'  => $INPUT->str('pretag'),
+                    'posttag' => $INPUT->str('posttag'),
+                    'icon'  => $INPUT->str('icon'),
+                );
+
+                $this->saveCBData($conf);
+                $this->reloadBar();
+            }
     }
 
     /**
@@ -105,6 +129,10 @@ class admin_plugin_custombuttons extends DokuWiki_Admin_Plugin {
         echo '<form id="cb_button_list" action="'.wl($ID).'" method="post">'
             .'<input type="hidden" name="do" value="admin" />'
             .'<input type="hidden" name="page" value="'.$this->getPluginName().'" />';
+        echo '<td>'
+            .'<input type="checkbox" name="delete" value="'.$key.'"/>'
+            .' <a href="'.wl($ID, array('do'=>'admin', 'page'=>$this->getPluginName(), 'edit'=>$key)).'">'.$this->getLang('btn_edit').'</a>'
+            .'</td>';
 
         formSecurityToken();
 
@@ -185,4 +213,34 @@ class admin_plugin_custombuttons extends DokuWiki_Admin_Plugin {
         echo '<div id="cb_comment">'.$this->getLang('txt_comment').'</div>';
         echo '</div>';
     }
+        // edit custom button form
+        if (isset($_GET['edit'])) {
+            $index = intval($_GET['edit']);
+            if (isset($conf[$index])) {
+                $button = $conf[$index];
+                echo '<h3>'.$this->getLang('editbtn').': '.hsc($button['label']).'</h3>';
+                echo '<form id="cb_edit_button" action="'.wl($ID).'" method="post">'
+                    .'<input type="hidden" name="do" value="admin" />'
+                    .'<input type="hidden" name="edit" value="'.$index.'" />'
+                    .'<input type="hidden" name="page" value="'.$this->getPluginName().'" />';
+                formSecurityToken();
+                echo '<table>';
+                echo '<tr><th>'.$this->getLang('addbtn_icon').'</th><td>'
+                    .'<select name="icon"><option value="">'.$this->getLang('addbtn_textonly').'</option>';
+                $files = glob(dirname(__FILE__).'/ico/*.png');
+                foreach ($files as $file) {
+                    $file = hsc(basename($file));
+                    $selected = ($file == $button['icon']) ? 'selected' : '';
+                    echo '<option value="'.$file.'" '.$selected.'>'.$file.'</option>';
+                }
+                echo '</select></td><td></td></tr>';
+                echo '<tr><th>'.$this->getLang('addbtn_label').'</th><td><input type="text" name="label" value="'.hsc($button['label']).'" /></td><td></td></tr>';
+                echo '<tr><th>'.$this->getLang('addbtn_pretag').'</th><td><input type="text" name="pretag" value="'.hsc($button['pretag']).'" /></td><td>*</td></tr>';
+                echo '<tr><th>'.$this->getLang('addbtn_posttag').'</th><td><input type="text" name="posttag" value="'.hsc($button['posttag']).'" /></td><td>*</td></tr>';
+                echo '<tr><th>'.$this->getLang('addbtn_code').'</th><td><input type="text" name="code" value="'.hsc($button['code']).'" /></td><td></td></tr>';
+                echo '</table>';
+                echo '<input type="submit" class="button" value="'.$this->getLang('btn_save').'" />';
+                echo '</form>';
+            }
+        }
 }

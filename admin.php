@@ -122,7 +122,7 @@ class admin_plugin_custombuttons extends DokuWiki_Admin_Plugin {
         echo '<form id="cb_button_list" action="'.wl($ID).'" method="post">';
         echo '<input type="hidden" name="do" value="admin" />';
         echo '<input type="hidden" name="page" value="'.$this->getPluginName().'" />';
-        formSecurityToken();
+        echo formSecurityToken();
 
         echo '<table class="inline">';
         echo '<tr>'
@@ -144,7 +144,8 @@ class admin_plugin_custombuttons extends DokuWiki_Admin_Plugin {
                 }
                 echo '<td>'
                     .'<input type="checkbox" name="delete" value="'.$key.'" /> '
-                    .'<a href="'.wl($ID, array('do'=>'admin', 'page'=>$this->getPluginName(), 'edit'=>$key)).'">'.$this->getLang('btn_edit').'</a>'
+                    .' <a href="'.wl($ID, array('do'=>'admin','page'=>$this->getPluginName(),'edit'=>$key,'sectok' => getSecurityToken()
+                                                )).'">'.$this->getLang('btn_edit').'</a>'
                     .'</td>';
                 echo '</tr>';
             }
@@ -160,7 +161,7 @@ class admin_plugin_custombuttons extends DokuWiki_Admin_Plugin {
         echo '<input type="hidden" name="do" value="admin" />';
         echo '<input type="hidden" name="add" value="1" />';
         echo '<input type="hidden" name="page" value="'.$this->getPluginName().'" />';
-        formSecurityToken();
+        echo formSecurityToken();
         $this->renderButtonForm();
         echo '<input type="submit" class="button" value="'.$this->getLang('btn_add').'" />';
         echo '</form>';
@@ -175,7 +176,7 @@ class admin_plugin_custombuttons extends DokuWiki_Admin_Plugin {
                 echo '<input type="hidden" name="do" value="admin" />';
                 echo '<input type="hidden" name="edit" value="'.$index.'" />';
                 echo '<input type="hidden" name="page" value="'.$this->getPluginName().'" />';
-                formSecurityToken();
+                echo formSecurityToken();
                 $this->renderButtonForm($button);
                 echo '<input type="submit" class="button" value="'.$this->getLang('btn_save').'" />';
                 echo '</form>';

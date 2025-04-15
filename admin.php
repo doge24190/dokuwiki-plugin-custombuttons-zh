@@ -144,7 +144,7 @@ class admin_plugin_custombuttons extends DokuWiki_Admin_Plugin {
                 }
                 echo '<td>'
                     .'<input type="checkbox" name="delete" value="'.$key.'" /> '
-                    .'<a href="'.wl($ID, array('do'=>'admin', 'page'=>$this->getPluginName(), 'edit'=>$key)).'">'.$this->getLang('btn_edit').'</a>'
+                    .'<a href="'.wl($ID, array('do'=>'admin','page'=>$this->getPluginName(),'edit'=>$key,'sectok'=>getSecurityToken() )).'">'.$this->getLang('btn_edit').'</a>
                     .'</td>';
                 echo '</tr>';
             }

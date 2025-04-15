@@ -21,3 +21,6 @@ $lang['addbtn_posttag']    = '代码后缀：';
 $lang['addbtn_code']       = '默认文本：';
 $lang['btn_add']           = '加入';
 $lang['txt_comment']       = '<b>*</b> 如果你想加入一个按钮不提供前缀和后缀，留空就行。';
+$lang['btn_edit']          = '编辑';
+$lang['editbtn']           = '编辑定制按钮';
+$lang['btn_save']          = '保存更改';

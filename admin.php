@@ -168,15 +168,23 @@ class admin_plugin_custombuttons extends DokuWiki_Admin_Plugin {
         // edit form
         if ($INPUT->get->has('edit')) {
             $index = $INPUT->get->int('edit');
+
             if (isset($conf[$index])) {
                 $button = $conf[$index];
+
                 echo '<h3>'.$this->getLang('editbtn').': '.hsc($button['label']).'</h3>';
                 echo '<form id="cb_edit_button" action="'.wl($ID).'" method="post">';
                 echo '<input type="hidden" name="do" value="admin" />';
-                echo '<input type="hidden" name="edit" value="'.$index.'" />';
                 echo '<input type="hidden" name="page" value="'.$this->getPluginName().'" />';
+
+                // 真正的“保存编辑”动作
+                echo '<input type="hidden" name="save_edit" value="1" />';
+                echo '<input type="hidden" name="edit_index" value="'.$index.'" />';
+
                 formSecurityToken();
+
                 $this->renderButtonForm($button);
+
                 echo '<input type="submit" class="button" value="'.$this->getLang('btn_save').'" />';
                 echo '</form>';
             }

@@ -24,3 +24,4 @@ $lang['txt_comment']       = '<b>*</b> 如果你想加入一个按钮不提供�
 $lang['btn_edit']          = '编辑';
 $lang['editbtn']           = '编辑定制按钮';
 $lang['btn_save']          = '保存更改';
+$lang['btn_cancel']        = '取消更改';

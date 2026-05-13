@@ -24,3 +24,4 @@ $lang['txt_comment']       = '<b>*</b> If you don\'t want to add a shortcut butt
 $lang['btn_edit']          = 'Edit';
 $lang['editbtn']           = 'Edit Custom Button';
 $lang['btn_save']          = 'Save Changes';
+$lang['btn_cancel']        = 'Cancel Changes';

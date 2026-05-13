@@ -112,8 +112,23 @@ class admin_plugin_custombuttons extends DokuWiki_Admin_Plugin {
      * Render HTML output
      */
     public function html() {
-        global $ID, $INPUT; 
+        global $ID, $INPUT;
+
         $conf = $this->loadCBData();
+
+        $isEditing = false;
+        $editIndex = null;
+        $editButton = null;
+
+        if ($INPUT->get->has('edit')) {
+            $editIndex = $INPUT->get->int('edit');
+
+            if (isset($conf[$editIndex])) {
+                $isEditing = true;
+                $editButton = $conf[$editIndex];
+            }
+        }
+
         echo '<div id="custombuttons">';
         echo '<h1>'.$this->getLang('name').'</h1>';
 
@@ -154,40 +169,35 @@ class admin_plugin_custombuttons extends DokuWiki_Admin_Plugin {
         echo '<input type="submit" class="button" value="'.$this->getLang('btn_delete').'" />';
         echo '</form><br><br>';
 
-        // add custom button form
-        echo '<h3>'.$this->getLang('addbtn').'</h3>';
-        echo '<form id="cb_add_button" action="'.wl($ID).'" method="post">';
-        echo '<input type="hidden" name="do" value="admin" />';
-        echo '<input type="hidden" name="add" value="1" />';
-        echo '<input type="hidden" name="page" value="'.$this->getPluginName().'" />';
-        formSecurityToken();
-        $this->renderButtonForm();
-        echo '<input type="submit" class="button" value="'.$this->getLang('btn_add').'" />';
-        echo '</form>';
+        if (!$isEditing) {
+            // add custom button form
+            echo '<h3>'.$this->getLang('addbtn').'</h3>';
+            echo '<form id="cb_add_button" action="'.wl($ID).'" method="post">';
+            echo '<input type="hidden" name="do" value="admin" />';
+            echo '<input type="hidden" name="add" value="1" />';
+            echo '<input type="hidden" name="page" value="'.$this->getPluginName().'" />';
+            formSecurityToken();
+            $this->renderButtonForm();
+            echo '<input type="submit" class="button" value="'.$this->getLang('btn_add').'" />';
+            echo '</form>';
+        }
 
         // edit form
-        if ($INPUT->get->has('edit')) {
-            $index = $INPUT->get->int('edit');
+        if ($isEditing) {
+            echo '<h3>'.$this->getLang('editbtn').': '.hsc($editButton['label']).'</h3>';
+            echo '<form id="cb_edit_button" action="'.wl($ID).'" method="post">';
+            echo '<input type="hidden" name="do" value="admin" />';
+            echo '<input type="hidden" name="page" value="'.$this->getPluginName().'" />';
+            echo '<input type="hidden" name="save_edit" value="1" />';
+            echo '<input type="hidden" name="edit_index" value="'.$editIndex.'" />';
 
-            if (isset($conf[$index])) {
-                $button = $conf[$index];
+            formSecurityToken();
 
-                echo '<h3>'.$this->getLang('editbtn').': '.hsc($button['label']).'</h3>';
-                echo '<form id="cb_edit_button" action="'.wl($ID).'" method="post">';
-                echo '<input type="hidden" name="do" value="admin" />';
-                echo '<input type="hidden" name="page" value="'.$this->getPluginName().'" />';
+            $this->renderButtonForm($editButton);
 
-                // 真正的“保存编辑”动作
-                echo '<input type="hidden" name="save_edit" value="1" />';
-                echo '<input type="hidden" name="edit_index" value="'.$index.'" />';
-
-                formSecurityToken();
-
-                $this->renderButtonForm($button);
-
-                echo '<input type="submit" class="button" value="'.$this->getLang('btn_save').'" />';
-                echo '</form>';
-            }
+            echo '<input type="submit" class="button" value="'.$this->getLang('btn_save').'" /> ';
+            echo '<a class="button" href="'.wl($ID, array('do' => 'admin', 'page' => $this->getPluginName())).'">'.$this->getLang('btn_cancel').'</a>';
+            echo '</form>';
         }
 
         echo '<div id="cb_comment">'.$this->getLang('txt_comment').'</div>';

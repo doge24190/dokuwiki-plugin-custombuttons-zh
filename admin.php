@@ -58,48 +58,48 @@ class admin_plugin_custombuttons extends DokuWiki_Admin_Plugin {
     public function handle() {
         global $INPUT;
 
-        if ($INPUT->has('add')) {
+        if ($INPUT->post->has('add')) {
             if (!checkSecurityToken()) return;
             $conf = $this->loadCBData() ?: array();
 
-            $type = ($INPUT->str('pretag') !== '' && $INPUT->str('posttag') !== '') ? 1 : 0;
+            $type = ($INPUT->post->str('pretag') !== '' && $INPUT->post->str('posttag') !== '') ? 1 : 0;
 
             $conf[] = array(
-                'label' => $INPUT->str('label'),
-                'code' => $INPUT->str('code'),
+                'label' => $INPUT->post->str('label'),
+                'code' => $INPUT->post->str('code'),
                 'type' => $type,
-                'pretag' => $INPUT->str('pretag'),
-                'posttag' => $INPUT->str('posttag'),
-                'icon' => $INPUT->str('icon'),
+                'pretag' => $INPUT->post->str('pretag'),
+                'posttag' => $INPUT->post->str('posttag'),
+                'icon' => $INPUT->post->str('icon'),
             );
 
             $this->saveCBData($conf);
             $this->reloadBar();
 
-        } elseif ($INPUT->has('delete')) {
+        } elseif ($INPUT->post->has('delete')) {
             if (!checkSecurityToken()) return;
 
             $conf = $this->loadCBData();
-            unset($conf[$INPUT->int('delete')]);
-            $this->saveCBData(array_values($conf)); // reindex
+            unset($conf[$INPUT->post->int('delete')]);
+            $this->saveCBData(array_values($conf));
             $this->reloadBar();
 
-        } elseif ($INPUT->has('edit')) {
+        } elseif ($INPUT->post->has('edit')) {
             if (!checkSecurityToken()) return;
 
             $conf = $this->loadCBData();
-            $index = $INPUT->int('edit');
+            $index = $INPUT->post->int('edit');
 
             if (isset($conf[$index])) {
-                $type = ($INPUT->str('pretag') !== '' && $INPUT->str('posttag') !== '') ? 1 : 0;
+                $type = ($INPUT->post->str('pretag') !== '' && $INPUT->post->str('posttag') !== '') ? 1 : 0;
 
                 $conf[$index] = array(
-                    'label' => $INPUT->str('label'),
-                    'code' => $INPUT->str('code'),
+                    'label' => $INPUT->post->str('label'),
+                    'code' => $INPUT->post->str('code'),
                     'type' => $type,
-                    'pretag' => $INPUT->str('pretag'),
-                    'posttag' => $INPUT->str('posttag'),
-                    'icon' => $INPUT->str('icon'),
+                    'pretag' => $INPUT->post->str('pretag'),
+                    'posttag' => $INPUT->post->str('posttag'),
+                    'icon' => $INPUT->post->str('icon'),
                 );
 
                 $this->saveCBData($conf);
@@ -112,7 +112,7 @@ class admin_plugin_custombuttons extends DokuWiki_Admin_Plugin {
      * Render HTML output
      */
     public function html() {
-        global $ID;
+        global $ID, $INPUT; 
         $conf = $this->loadCBData();
         echo '<div id="custombuttons">';
         echo '<h1>'.$this->getLang('name').'</h1>';
@@ -166,8 +166,8 @@ class admin_plugin_custombuttons extends DokuWiki_Admin_Plugin {
         echo '</form>';
 
         // edit form
-        if (isset($_GET['edit'])) {
-            $index = intval($_GET['edit']);
+        if ($INPUT->get->has('edit')) {
+            $index = $INPUT->get->int('edit');
             if (isset($conf[$index])) {
                 $button = $conf[$index];
                 echo '<h3>'.$this->getLang('editbtn').': '.hsc($button['label']).'</h3>';
